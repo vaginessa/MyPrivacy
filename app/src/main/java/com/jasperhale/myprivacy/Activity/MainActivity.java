@@ -1,5 +1,6 @@
 package com.jasperhale.myprivacy.Activity;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v4.app.Fragment;
@@ -19,16 +20,17 @@ import com.jasperhale.myprivacy.Activity.Base.LogUtil;
 import com.jasperhale.myprivacy.Activity.View.AboutActivity;
 import com.jasperhale.myprivacy.Activity.View.AppListFragment;
 import com.jasperhale.myprivacy.Activity.View.SettingActivity;
+import com.jasperhale.myprivacy.Activity.ViewModel.MainViewModel;
 import com.jasperhale.myprivacy.R;
 import com.jasperhale.myprivacy.databinding.ActivityMainBinding;
 
 
-public class MainActivity extends BaseActivity implements SearchView.OnQueryTextListener, ViewPager.OnPageChangeListener {
-
+public class MainActivity extends BaseActivity implements  ViewPager.OnPageChangeListener {
+    //SearchView.OnQueryTextListener
     private ActivityMainBinding binding;
     private MainActivity.SectionsPagerAdapter mSectionsPagerAdapter;
     private Toolbar toolbar;
-    private SearchView searchView;
+    //private SearchView searchView;
 
 
     @Override
@@ -40,6 +42,9 @@ public class MainActivity extends BaseActivity implements SearchView.OnQueryText
         //设置toolbar
         toolbar = binding.toolbar;
         setSupportActionBar(toolbar);
+
+        MainViewModel mainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        this.getLifecycle().addObserver(mainViewModel);
 
         //ViewPage适配器
         mSectionsPagerAdapter = new MainActivity.SectionsPagerAdapter(getSupportFragmentManager());
@@ -66,8 +71,8 @@ public class MainActivity extends BaseActivity implements SearchView.OnQueryText
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar, menu);
         final MenuItem searchItem = menu.findItem(R.id.menu_search);
-        searchView = (SearchView) searchItem.getActionView();
-        searchView.setOnQueryTextListener(this);
+        //searchView = (SearchView) searchItem.getActionView();
+        //searchView.setOnQueryTextListener(this);
         return true;
     }
 
@@ -88,6 +93,7 @@ public class MainActivity extends BaseActivity implements SearchView.OnQueryText
         }
     }
 
+    /*
     @Override
     public boolean onQueryTextChange(String query) {
         LogUtil.d("Search",query);
@@ -100,7 +106,7 @@ public class MainActivity extends BaseActivity implements SearchView.OnQueryText
     public boolean onQueryTextSubmit(String query) {
         return false;
     }
-
+    */
 
     @Override
     public void onPageScrollStateChanged(int arg0) {
@@ -116,15 +122,15 @@ public class MainActivity extends BaseActivity implements SearchView.OnQueryText
 
     @Override
     public void onPageSelected(int position) {
-
+        /*
         if (!searchView.getQuery().equals("")){
             LogUtil.d("UI",String.valueOf(position));
-            AppListFragment appListFragment =  (AppListFragment)mSectionsPagerAdapter.instantiateItem(binding.viewPager,position);
-            appListFragment.Search(searchView.getQuery().toString());
-        }
+            //AppListFragment appListFragment =  (AppListFragment)mSectionsPagerAdapter.instantiateItem(binding.viewPager,position);
+            //appListFragment.Search(searchView.getQuery().toString());
+        }*/
     }
 
-    //
+
     private class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
@@ -133,9 +139,11 @@ public class MainActivity extends BaseActivity implements SearchView.OnQueryText
 
         @Override
         public Fragment getItem(int position) {
-            //新建Fragment mViewModel 实例
+            Bundle bundle = new Bundle();
+            bundle.putInt("MainActivity", position);
+            //新建Fragment 实例,传入postion
             AppListFragment fragment = new AppListFragment();
-            fragment.setPosition(position);
+            fragment.setArguments(bundle);
             return fragment;
         }
 

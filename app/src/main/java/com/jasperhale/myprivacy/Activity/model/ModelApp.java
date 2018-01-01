@@ -8,7 +8,7 @@ import com.jasperhale.myprivacy.Activity.item.AppSetting_wifi;
  * Created by ZHANG on 2017/11/11.
  */
 
-public interface ModelApp {
+public interface ModelApp<T> {
 
     AppSetting_appinstall getAppSetting_appinstall(String packageName);
     AppSetting_wifi getAppSetting_wifi(String packageName);

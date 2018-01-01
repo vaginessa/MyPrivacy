@@ -115,31 +115,6 @@ public class BindingAdapter extends RecyclerView.Adapter<BindingHolder> {
         holder.bindData(items.get(position));
     }
 
-
-    /*
-    @Override
-    public void onBindViewHolder(BindingHolder holder, int position, List<Object> payloads) {
-        if (payloads.isEmpty()) {
-            onBindViewHolder(holder, position);
-        } else {
-            Bundle payload = (Bundle) payloads.get(0);//取出我们在getChangePayload（）方法返回的bundle
-            LogUtil.d("Adatper", "");
-            for (String key : payload.keySet()) {
-                switch (key) {
-                    case "ApplistItem":
-                        this.replaceItem(payload.getParcelable("ApplistItem"), position);
-                        break;
-                    case "AppSetting":
-                        this.replaceItem(payload.getParcelable("AppSetting"), position);
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-    }*/
-
-
     @Override
     public int getItemCount() {
         return items.size();

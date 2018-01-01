@@ -20,6 +20,7 @@ public class BindingHolder  extends RecyclerView.ViewHolder {
 
     public void bindData(BindingAdapterItem item) {
         binding.setVariable(BR.item, item);
+        //binding.executePendingBindings();
     }
 
 }

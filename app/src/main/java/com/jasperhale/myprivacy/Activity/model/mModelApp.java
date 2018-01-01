@@ -3,11 +3,14 @@ package com.jasperhale.myprivacy.Activity.model;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.jasperhale.myprivacy.Activity.Base.LogUtil;
 import com.jasperhale.myprivacy.Activity.Base.MyApplicantion;
 import com.jasperhale.myprivacy.Activity.item.AppSetting_appinstall;
 import com.jasperhale.myprivacy.Activity.item.AppSetting_cell;
 import com.jasperhale.myprivacy.Activity.item.AppSetting_wifi;
 
+
+import java.lang.reflect.Field;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -39,8 +42,9 @@ public class mModelApp implements ModelApp {
 
     @Override
     public void setAppSetting_appinstall(String packageName, AppSetting_appinstall appSetting_appinstall) {
-        setSharedPreferences(packageName + "/InstalledApp", appSetting_appinstall.getInstalledApp());
-        setSharedPreferences(packageName + "/RunningApp", appSetting_appinstall.getRunningApp());
+        set(packageName,appSetting_appinstall);
+        //setSharedPreferences(packageName + "/InstalledApp", appSetting_appinstall.getInstalledApp());
+        //setSharedPreferences(packageName + "/RunningApp", appSetting_appinstall.getRunningApp());
     }
 
     @Override
@@ -56,11 +60,15 @@ public class mModelApp implements ModelApp {
 
     @Override
     public void setAppSetting_wifi(String packageName, AppSetting_wifi appSetting_wifi) {
+        /*
         setSharedPreferences(packageName + "/WifiScan", appSetting_wifi.getWifiScan());
         setSharedPreferences(packageName + "/ConnectionWifi", appSetting_wifi.getConnectionWifi());
         setSharedPreferences(packageName + "/SSID", appSetting_wifi.getSSID());
         setSharedPreferences(packageName + "/Mac", appSetting_wifi.getMac());
         setSharedPreferences(packageName + "/NetworkId", appSetting_wifi.getNetworkId());
+        */
+        set(packageName,appSetting_wifi);
+
     }
 
     @Override
@@ -76,41 +84,77 @@ public class mModelApp implements ModelApp {
 
     @Override
     public void setAppSetting_cell(String packageName, AppSetting_cell appSetting_cell) {
+        /*
         setSharedPreferences(packageName + "/CellInfo", appSetting_cell.getCellInfo());
         setSharedPreferences(packageName + "/Mcc", appSetting_cell.getMcc());
         setSharedPreferences(packageName + "/Mnc", appSetting_cell.getMnc());
         setSharedPreferences(packageName + "/Cid", appSetting_cell.getCid());
         setSharedPreferences(packageName + "/Lac", appSetting_cell.getLac());
+        */
+        set(packageName,appSetting_cell);
     }
 
     @Override
     public boolean getApp(String packageName) {
-        return getSharedPreferences(packageName+"/InstalledApp")||
-                getSharedPreferences(packageName+"/RunningApp")||
-                getSharedPreferences(packageName+"/WifiScan")||
-                getSharedPreferences(packageName+"/ConnectionWifi")||
-                getSharedPreferences(packageName+"/CellInfo");
+        return getSharedPreferences(packageName + "/InstalledApp") ||
+                getSharedPreferences(packageName + "/RunningApp") ||
+                getSharedPreferences(packageName + "/WifiScan") ||
+                getSharedPreferences(packageName + "/ConnectionWifi") ||
+                getSharedPreferences(packageName + "/CellInfo");
     }
 
     @Override
-    public void setApp(String packageName,boolean value) {
-        setSharedPreferences(packageName , value);
+    public void setApp(String packageName, boolean value) {
+        setSharedPreferences(packageName, value);
+    }
+
+    private <T> void set(String packageName, T t) {
+        Class c = t.getClass();
+        Field[] fields = c.getDeclaredFields();
+        try {
+            for (Field field : fields) {
+                field.setAccessible(true);
+                switch (field.getType().toString()) {
+                    case "class java.lang.String": {
+                        setSharedPreferences(packageName + "/" + field.getName(), (String) field.get(t));
+                        LogUtil.d("mModelApp",field.getType().toString());
+                        break;
+                    }
+                    case "int": {
+                        setSharedPreferences(packageName + "/" + field.getName(), (int) field.get(t));
+                        LogUtil.d("mModelApp",field.getType().toString());
+                        break;
+                    }
+                    case "boolean": {
+                        setSharedPreferences(packageName + "/" + field.getName(), (boolean) field.get(t));
+                        LogUtil.d("mModelApp",field.getType().toString());
+                        break;
+                    }
+                    default:
+                        LogUtil.d("mModelApp","nomatch");
+                        LogUtil.d("mModelApp",field.getType().toString());
+                        break;
+                }
+            }
+        } catch (java.lang.IllegalAccessException e) {
+            LogUtil.d("mModelApp",e.toString());
+        }
     }
 
     //设置普通键值
     private void setSharedPreferences(String key, boolean value) {
         editor.putBoolean(key, value).commit();
-        MakeFileReadable(MyApplicantion.getContext(),"AppSetting");
+        MakeFileReadable(MyApplicantion.getContext(), "AppSetting");
     }
 
     private void setSharedPreferences(String key, String value) {
         editor.putString(key, value).commit();
-        MakeFileReadable(MyApplicantion.getContext(),"AppSetting");
+        MakeFileReadable(MyApplicantion.getContext(), "AppSetting");
     }
 
     private void setSharedPreferences(String key, int value) {
         editor.putInt(key, value).commit();
-        MakeFileReadable(MyApplicantion.getContext(),"AppSetting");
+        MakeFileReadable(MyApplicantion.getContext(), "AppSetting");
     }
 
     //获取普通键值
@@ -134,7 +178,7 @@ public class mModelApp implements ModelApp {
         return ctx.getSharedPreferences(prefName, MODE_PRIVATE);
     }
 
-    private static void MakeFileReadable(Context ctx, String prefName){
+    private static void MakeFileReadable(Context ctx, String prefName) {
   /*
         File prefsDir = new File(ctx.getApplicationInfo().dataDir, "shared_prefs");
         File prefsFile = new File(prefsDir, prefName + ".xml");

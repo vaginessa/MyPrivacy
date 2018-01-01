@@ -6,7 +6,6 @@ import android.text.TextUtils;
 
 import com.jasperhale.myprivacy.Activity.Base.LogUtil;
 import com.jasperhale.myprivacy.Activity.Base.MyApplicantion;
-import com.jasperhale.myprivacy.Activity.ViewModel.ViewModel;
 import com.jasperhale.myprivacy.Activity.item.ApplistItem;
 import com.jasperhale.myprivacy.Activity.model.Model;
 import com.jasperhale.myprivacy.Activity.model.mModel;
@@ -57,7 +56,6 @@ public class mPresenter implements Presenter {
                     //.observeOn(Schedulers.computation())
                     //剔除对应应用
                     .map(packages -> {
-                        short i = 0;
                         List<PackageInfo> items = new ArrayList<>();
                         switch (position) {
                             case 0: {

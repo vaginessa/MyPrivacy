@@ -1,10 +1,12 @@
 package com.jasperhale.myprivacy.Activity.adapter;
 
 import android.databinding.DataBindingUtil;
+import android.databinding.ObservableArrayList;
 import android.databinding.ViewDataBinding;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -12,12 +14,14 @@ import android.view.ViewGroup;
 import com.jasperhale.myprivacy.Activity.Base.LogUtil;
 import com.jasperhale.myprivacy.Activity.Base.MyApplicantion;
 import com.jasperhale.myprivacy.Activity.item.ApplistItem;
+import com.jasperhale.myprivacy.Activity.item.DiffCallBack_ApplistItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -26,78 +30,23 @@ import io.reactivex.schedulers.Schedulers;
 
 public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
 
-    private List<ApplistItem> items = new ArrayList<>();
-    private List<ApplistItem> items_backup = new ArrayList<>();
+    private ObservableArrayList<ApplistItem> items;
+    protected ListChangedCallback itemsChangeCallback;
 
-    public ApplistItem getItem(int position) {
-        return items.get(position);
+    public BindAdapter_applist() {
+        super();
+        this.items = new ObservableArrayList<>();
+        this.itemsChangeCallback = new ListChangedCallback();
     }
-    //获取List<BindingAdapterItem> 实例
-    public List<ApplistItem> getItems() {
+
+    //获取ObservableArrayList<ApplistItem> 实例
+    public ObservableArrayList<ApplistItem> getItems() {
         return items;
     }
 
-    public void setItems_backup() {
-        items_backup.clear();
-        Observable
-                .create((ObservableOnSubscribe<List<ApplistItem>>)
-                        emitter -> emitter.onNext(items)
-                )
-                //cpu密集
-                .observeOn(Schedulers.computation())
-                .subscribe(items -> items_backup.addAll(items));
-    }
-    public void setItems_backup( List<ApplistItem> items) {
-        items_backup.clear();
-        Observable
-                .create((ObservableOnSubscribe<List<ApplistItem>>)
-                        emitter -> emitter.onNext(items)
-                )
-                //cpu密集 排序
-                .observeOn(Schedulers.computation())
-                .subscribe(itemsp -> items_backup.addAll(itemsp));
-    }
-
-
-    public List<ApplistItem> getItems_backup() {
-        return items_backup;
-    }
-
     //显示list<item>
-    public void setItems(List<ApplistItem> items) {
-        clearItems();
-        addItems(items);
-    }
-
-    //显示单个item
-    public void setItem(ApplistItem item) {
-        clearItems();
-        addItem(item);
-    }
-
-    //添加item
-    public void addItem(ApplistItem item) {
-        items.add(item);
-    }
-
-    //指定位置添加item
-    public void addItem(ApplistItem item, int position) {
-        items.add(position, item);
-    }
-
-    //添加list<item>
-    public void addItems(List<ApplistItem> items) {
-        this.items.addAll(items);
-    }
-
-    //替换item
-    public void replaceItem(ApplistItem item, int position) {
-        items.set(position, item);
-    }
-
-    //移除item
-    public void removeItem(ApplistItem item) {
-        items.remove(item);
+    public void setItems(ObservableArrayList<ApplistItem> items) {
+        this.items = items;
     }
 
     //清除item
@@ -105,10 +54,22 @@ public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
         items.clear();
     }
 
+    //绑定ObservableArrayList 回掉
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView)
+    {
+        super.onAttachedToRecyclerView(recyclerView);
+        this.items.addOnListChangedCallback(itemsChangeCallback);
+    }
 
-    /**
-     * @return 返回的是adapter的view
-     */
+    //解绑
+    @Override
+    public void onDetachedFromRecyclerView(RecyclerView recyclerView)
+    {
+        super.onDetachedFromRecyclerView(recyclerView);
+        this.items.removeOnListChangedCallback(itemsChangeCallback);
+    }
+
     @Override
     public BindingHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         ViewDataBinding binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), viewType, parent, false);
@@ -123,8 +84,9 @@ public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
         holder.bindData(items.get(position));
     }
 
-
-
+    /*
+    * 定向刷新
+    * */
     @Override
     public void onBindViewHolder(BindingHolder holder, int position, List<Object> payloads) {
         if (payloads.isEmpty()) {
@@ -142,7 +104,7 @@ public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
                         break;
                     case "AppIcon":
                         Bitmap bitmap = payload.getParcelable("AppIcon");
-                        items.get(position).setAppIcon(new BitmapDrawable(MyApplicantion.getContext().getResources(),bitmap));
+                        items.get(position).setAppIcon(new BitmapDrawable(MyApplicantion.getContext().getResources(), bitmap));
                         break;
                     default:
                         break;
@@ -150,7 +112,6 @@ public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
             }
         }
     }
-
 
     @Override
     public int getItemCount() {
@@ -160,5 +121,49 @@ public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
     @Override
     public int getItemViewType(int position) {
         return items.get(position).getViewType();
+    }
+
+    //刷新列表
+    private void Refresh(ObservableArrayList<ApplistItem> items) {
+        Observable
+                .create((ObservableOnSubscribe<String>)
+                        emitter -> emitter.onNext("")
+                )
+                .subscribeOn(Schedulers.trampoline())
+                //cpu密集
+                .observeOn(Schedulers.newThread())
+                .map(s -> DiffUtil.calculateDiff(new DiffCallBack_ApplistItem(BindAdapter_applist.this.getItems(), items), false))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(diffResult -> {
+                    diffResult.dispatchUpdatesTo(BindAdapter_applist.this);
+                    BindAdapter_applist.this.setItems(items);
+                });
+    }
+
+    class ListChangedCallback extends ObservableArrayList.OnListChangedCallback<ObservableArrayList<ApplistItem>> {
+        @Override
+        public void onChanged(ObservableArrayList<ApplistItem> newItems) {
+            Refresh(newItems);
+        }
+
+        @Override
+        public void onItemRangeChanged(ObservableArrayList<ApplistItem> newItems, int i, int i1) {
+            Refresh(newItems);
+        }
+
+        @Override
+        public void onItemRangeInserted(ObservableArrayList<ApplistItem> newItems, int i, int i1) {
+            Refresh(newItems);
+        }
+
+        @Override
+        public void onItemRangeMoved(ObservableArrayList<ApplistItem> newItems, int i, int i1, int i2) {
+            Refresh(newItems);
+        }
+
+        @Override
+        public void onItemRangeRemoved(ObservableArrayList<ApplistItem> sender, int positionStart, int itemCount) {
+            Refresh(sender);
+        }
     }
 }

@@ -248,19 +248,19 @@ public class InstalledApp {
         if (prefs.getBoolean(lpparam.packageName + "/InstalledApp", false)) {
 
             XposedBridge.log("MyPrivacy hook " + lpparam.packageName + "/InstalledApp");
-            hook_getApplicationInfo();
+            //hook_getApplicationInfo();
 
-            hook_getPackagesHoldingPermissions();
-            hook_getPackagesForUid();
-            hook_getPackageInfo();
+            //hook_getPackagesHoldingPermissions();
+            //hook_getPackagesForUid();
+            //hook_getPackageInfo();
 
             hook_getInstalledApplications();
             hook_getInstalledPackages();
-            hook_getInstalledProviders();
-            hook_getInstalledProvidersForProfile();
+            //hook_getInstalledProviders();
+            //hook_getInstalledProvidersForProfile();
 
-            hook_getPreferredActivities();
-            hook_getPreferredPackages();
+            //hook_getPreferredActivities();
+            //hook_getPreferredPackages();
         }
         if (prefs.getBoolean(lpparam.packageName + "/RunningApp", false)) {
 

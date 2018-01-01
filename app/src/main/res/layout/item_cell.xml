@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
-            android:visibility="@{item.cellInfo == true? View.VISIBLE : View.GONE}">
+            >
 
 
             <TextView

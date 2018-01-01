@@ -15,8 +15,8 @@ public class AppSetting_appinstall extends BaseItem {
         return R.layout.item_appinstall;
     }
 
-    private boolean InstalledApp = false;
-    private boolean RunningApp = false;
+    public boolean InstalledApp = false;
+    public boolean RunningApp = false;
 
     @Bindable
     public boolean getInstalledApp() {
