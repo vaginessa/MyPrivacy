@@ -2,8 +2,10 @@ package com.jasperhale.myprivacy.Activity.Repository;
 
 import android.content.pm.PackageInfo;
 import android.databinding.ObservableArrayList;
+import android.text.TextUtils;
 
 import com.jasperhale.myprivacy.Activity.Base.LogUtil;
+import com.jasperhale.myprivacy.Activity.Base.MyApplicantion;
 import com.jasperhale.myprivacy.Activity.adapter.BindingAdapterItem;
 import com.jasperhale.myprivacy.Activity.item.ApplistItem;
 import com.jasperhale.myprivacy.Activity.model.Model;
@@ -33,6 +35,11 @@ public class MainRepository {
         this.items_user = new ObservableArrayList<>();
         this.items_system = new ObservableArrayList<>();
         this.items_limit = new ObservableArrayList<>();
+       /*
+        this.items_user = getitems(0);
+        this.items_system = getitems(1);
+        this.items_limit = getitems(2);
+        */
     }
 
     public ObservableArrayList<ApplistItem> getItems_user() {
@@ -40,14 +47,27 @@ public class MainRepository {
         return items_user;
     }
 
+    public ObservableArrayList<ApplistItem> getItems_user(String query) {
+        return searchitems(query, items_user);
+    }
+
     public ObservableArrayList<ApplistItem> getItems_system() {
         items_system = getitems(1);
         return items_system;
     }
 
-    public ObservableArrayList<ApplistItem> getItems_limit(){
+    public ObservableArrayList<ApplistItem> getItems_system(String query) {
+        return searchitems(query, items_system);
+
+    }
+
+    public ObservableArrayList<ApplistItem> getItems_limit() {
         items_limit = getitems(2);
         return items_limit;
+    }
+
+    public ObservableArrayList<ApplistItem> getItems_limit(String query) {
+        return searchitems(query, items_limit);
     }
 
     private ObservableArrayList<ApplistItem> getitems(int position) {
@@ -102,6 +122,29 @@ public class MainRepository {
                     Collections.sort(Appitems);
                 });
         return Appitems;
+    }
+
+    private ObservableArrayList<ApplistItem> searchitems(String query, ObservableArrayList<ApplistItem> items_main) {
+        if (query.equals("")) {
+            return items_main;
+        } else {
+            ObservableArrayList<ApplistItem> items = new ObservableArrayList<>();
+            Observable
+                    .create((ObservableOnSubscribe<String>)
+                            emitter -> emitter.onNext(MyApplicantion.transformPinYin(query))
+                    )
+                    .subscribeOn(Schedulers.newThread())
+                    //cpu密集 搜索
+                    .observeOn(Schedulers.computation())
+                    .subscribe(result -> {
+                        for (ApplistItem item : items_main) {
+                            if ((item).getAppName_compare().contains(result)) {
+                                items.add(item);
+                            }
+                        }
+                    });
+            return items;
+        }
     }
 
 }

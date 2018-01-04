@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <data>
-        <variable name="mainViewModel" type="com.jasperhale.myprivacy.Activity.ViewModel.MainViewModel"/>
-    </data>
 
     <android.support.constraint.ConstraintLayout xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
@@ -21,13 +18,7 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" >
-                <android.support.v7.widget.SearchView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                </android.support.v7.widget.SearchView>
-            </android.support.v7.widget.Toolbar>
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
             <android.support.design.widget.TabLayout
                 android:id="@+id/tab_layout"
@@ -35,7 +26,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/colorPrimary"
                 app:tabGravity="fill"
-                app:tabMode="fixed"/>
+                app:tabMode="fixed" />
 
         </android.support.design.widget.AppBarLayout>
 

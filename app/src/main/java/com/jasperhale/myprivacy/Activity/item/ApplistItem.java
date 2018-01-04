@@ -112,21 +112,6 @@ public class ApplistItem extends BaseItem implements Comparable<ApplistItem>,Par
         return this.AppName_compare.compareTo(another.AppName_compare);
     }
 
-    @BindingAdapter("loadAppIcon")
-    public static void LoadDrawable(ImageView imageView, Drawable Icon) {
-        Context context = imageView.getContext();
-        //BitmapDrawable bd = (BitmapDrawable)Icon;
-        //Bitmap bitmap = bd.getBitmap();
-
-        RequestOptions options = new RequestOptions()
-                .error(Icon)
-                .placeholder(Icon);
-
-        Glide.with(context)
-                .load("")
-                .apply(options)
-                .into(imageView);
-    }
 
     @Override
     public int describeContents(){

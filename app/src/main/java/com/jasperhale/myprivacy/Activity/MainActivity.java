@@ -25,12 +25,12 @@ import com.jasperhale.myprivacy.R;
 import com.jasperhale.myprivacy.databinding.ActivityMainBinding;
 
 
-public class MainActivity extends BaseActivity implements  ViewPager.OnPageChangeListener {
-    //SearchView.OnQueryTextListener
+public class MainActivity extends BaseActivity implements ViewPager.OnPageChangeListener, SearchView.OnQueryTextListener {
     private ActivityMainBinding binding;
+    private MainViewModel mainViewModel;
     private MainActivity.SectionsPagerAdapter mSectionsPagerAdapter;
     private Toolbar toolbar;
-    //private SearchView searchView;
+    private SearchView searchView;
 
 
     @Override
@@ -43,7 +43,7 @@ public class MainActivity extends BaseActivity implements  ViewPager.OnPageChang
         toolbar = binding.toolbar;
         setSupportActionBar(toolbar);
 
-        MainViewModel mainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        mainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         this.getLifecycle().addObserver(mainViewModel);
 
         //ViewPage适配器
@@ -57,22 +57,11 @@ public class MainActivity extends BaseActivity implements  ViewPager.OnPageChang
 
 
     @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar, menu);
         final MenuItem searchItem = menu.findItem(R.id.menu_search);
-        //searchView = (SearchView) searchItem.getActionView();
-        //searchView.setOnQueryTextListener(this);
+        searchView = (SearchView) searchItem.getActionView();
+        searchView.setOnQueryTextListener(this);
         return true;
     }
 
@@ -93,12 +82,11 @@ public class MainActivity extends BaseActivity implements  ViewPager.OnPageChang
         }
     }
 
-    /*
+
     @Override
     public boolean onQueryTextChange(String query) {
-        LogUtil.d("Search",query);
-        AppListFragment appListFragment =  (AppListFragment)mSectionsPagerAdapter.instantiateItem(binding.viewPager,binding.tabLayout.getSelectedTabPosition());
-        appListFragment.Search(query);
+        LogUtil.d("Search", query);
+        mainViewModel.SearchRecyclerview(query,binding.tabLayout.getSelectedTabPosition());
         return true;
     }
 
@@ -106,7 +94,7 @@ public class MainActivity extends BaseActivity implements  ViewPager.OnPageChang
     public boolean onQueryTextSubmit(String query) {
         return false;
     }
-    */
+
 
     @Override
     public void onPageScrollStateChanged(int arg0) {
@@ -122,12 +110,10 @@ public class MainActivity extends BaseActivity implements  ViewPager.OnPageChang
 
     @Override
     public void onPageSelected(int position) {
-        /*
-        if (!searchView.getQuery().equals("")){
-            LogUtil.d("UI",String.valueOf(position));
-            //AppListFragment appListFragment =  (AppListFragment)mSectionsPagerAdapter.instantiateItem(binding.viewPager,position);
-            //appListFragment.Search(searchView.getQuery().toString());
-        }*/
+        if (!searchView.getQuery().equals("")) {
+            LogUtil.d("UI", String.valueOf(position));
+            mainViewModel.SearchRecyclerview(searchView.getQuery().toString(),position);
+        }
     }
 
 

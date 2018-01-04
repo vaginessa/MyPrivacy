@@ -1,4 +1,4 @@
-package com.jasperhale.myprivacy.Activity.adapter;
+package com.jasperhale.myprivacy.Activity.ViewModel;
 
 import android.databinding.DataBindingUtil;
 import android.databinding.ObservableArrayList;
@@ -13,10 +13,10 @@ import android.view.ViewGroup;
 
 import com.jasperhale.myprivacy.Activity.Base.LogUtil;
 import com.jasperhale.myprivacy.Activity.Base.MyApplicantion;
+import com.jasperhale.myprivacy.Activity.adapter.BindingHolder;
 import com.jasperhale.myprivacy.Activity.item.ApplistItem;
 import com.jasperhale.myprivacy.Activity.item.DiffCallBack_ApplistItem;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -25,26 +25,24 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 /**
- * Created by ZHANG on 2017/12/10.
+ * Created by ZHANG on 2018/1/3.
  */
 
-public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
+public class FragmentViewModel extends RecyclerView.Adapter<BindingHolder> {
+    public ObservableArrayList<ApplistItem> items;
+    protected FragmentViewModel.ListChangedCallback itemsChangeCallback;
 
-    private ObservableArrayList<ApplistItem> items;
-    protected ListChangedCallback itemsChangeCallback;
-
-
-
+    /*
     public BindAdapter_applist(ObservableArrayList<ApplistItem> items) {
         super();
         this.items = items;
         this.itemsChangeCallback = new ListChangedCallback();
-    }
+    }*/
 
-    public BindAdapter_applist() {
+    public FragmentViewModel() {
         super();
         this.items = new ObservableArrayList<>();
-        this.itemsChangeCallback = new ListChangedCallback();
+        this.itemsChangeCallback = new FragmentViewModel.ListChangedCallback();
     }
 
     //获取ObservableArrayList<ApplistItem> 实例
@@ -62,7 +60,7 @@ public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
         items.clear();
     }
 
-    //绑定ObservableArrayList 回掉
+    //绑定ObservableArrayList
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView)
     {
@@ -141,13 +139,14 @@ public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
                 .subscribeOn(Schedulers.trampoline())
                 //cpu密集
                 .observeOn(Schedulers.newThread())
-                .map(s -> DiffUtil.calculateDiff(new DiffCallBack_ApplistItem(BindAdapter_applist.this.getItems(), items), false))
+                .map(s -> DiffUtil.calculateDiff(new DiffCallBack_ApplistItem(FragmentViewModel.this.getItems(), items), false))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(diffResult -> {
-                    diffResult.dispatchUpdatesTo(BindAdapter_applist.this);
-                    BindAdapter_applist.this.setItems(items);
+                    diffResult.dispatchUpdatesTo(FragmentViewModel.this);
+                    FragmentViewModel.this.setItems(items);
                 });
     }
+
 
 
     class ListChangedCallback extends ObservableArrayList.OnListChangedCallback<ObservableArrayList<ApplistItem>> {
@@ -158,27 +157,27 @@ public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
 
         @Override
         public void onItemRangeChanged(ObservableArrayList<ApplistItem> newItems, int positionStart, int itemCount) {
-            notifyItemRangeChanged(positionStart, itemCount);
+            //notifyItemRangeChanged(positionStart, itemCount);
         }
 
         @Override
         public void onItemRangeInserted(ObservableArrayList<ApplistItem> newItems, int positionStart, int itemCount) {
-            notifyItemRangeInserted(positionStart, itemCount);
-            notifyItemRangeChanged(positionStart, itemCount);
+            //notifyItemRangeInserted(positionStart, itemCount);
+            //notifyItemRangeChanged(positionStart, itemCount);
         }
 
         @Override
         public void onItemRangeMoved(ObservableArrayList<ApplistItem> newItems,int fromPosition, int toPosition, int itemCount) {
             // Note:不支持一次性移动"多个"item
-            notifyItemMoved(fromPosition, toPosition);
-            notifyDataSetChanged();
+            //notifyItemMoved(fromPosition, toPosition);
+            //notifyDataSetChanged();
         }
 
         @Override
         public void onItemRangeRemoved(ObservableArrayList<ApplistItem> sender, int positionStart, int itemCount) {
             // Note:不支持一次性移动"多个"item
-            notifyItemRangeRemoved(positionStart, itemCount);
-            notifyItemRangeChanged(positionStart, itemCount);
+            //notifyItemRangeRemoved(positionStart, itemCount);
+            //notifyItemRangeChanged(positionStart, itemCount);
         }
     }
 }

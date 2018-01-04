@@ -4,24 +4,27 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.jasperhale.myprivacy.Activity.Base.LogUtil;
+import com.jasperhale.myprivacy.Activity.ViewModel.FragmentViewModel;
 import com.jasperhale.myprivacy.Activity.ViewModel.MainViewModel;
-import com.jasperhale.myprivacy.Activity.adapter.BindAdapter_applist;
+
 import com.jasperhale.myprivacy.R;
+
+
 
 
 public class AppListFragment extends Fragment {
 
+    private String Tag = "AppListFragment";
     private com.jasperhale.myprivacy.AppListFragment binding;
     private int position;
 
     private MainViewModel mainViewModel;
-    private BindAdapter_applist adapter = new BindAdapter_applist();
+    private FragmentViewModel fragmentViewModel;
 
 
     @Override
@@ -32,6 +35,7 @@ public class AppListFragment extends Fragment {
         position = bundle.getInt("MainActivity");
 
         mainViewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
+        fragmentViewModel = new FragmentViewModel();
 
         super.onCreate(savedInstanceState);
     }
@@ -43,40 +47,33 @@ public class AppListFragment extends Fragment {
 
         binding = DataBindingUtil.inflate(inflater,
                 R.layout.fragment_app_list, container, false);
+        binding.setFragmentViewModel(fragmentViewModel);
 
-        LinearLayoutManager manager = new LinearLayoutManager(getActivity());
-        binding.recyclerView.setLayoutManager(manager);
-        binding.recyclerView.setAdapter(adapter);
-
-        binding.recyclerView.setNestedScrollingEnabled(false);
-        //binding.recyclerView.setHasFixedSize(true);
-        //binding.recyclerView.getLayoutManager().setAutoMeasureEnabled(true);
-
-        //initSwipeRefresh();
-        return binding.getRoot();
-    }
-
-    @Override
-    public void onStart() {
-        LogUtil.d("UI", "onStart()" + String.valueOf(position));
-        //presenter.RefreshView();
         switch (position) {
             case 0: {
-                adapter.setItems(mainViewModel.getItems_user());
+                fragmentViewModel.setItems(mainViewModel.getItems_user());
                 break;
             }
             case 1: {
-                adapter.setItems(mainViewModel.getItems_system());
+                fragmentViewModel.setItems(mainViewModel.getItems_system());
                 break;
             }
             case 2: {
-                adapter.setItems(mainViewModel.getItems_limit());
+                fragmentViewModel.setItems(mainViewModel.getItems_limit());
                 break;
             }
             default:
                 break;
         }
 
+        initSwipeRefresh();
+
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onStart() {
+        LogUtil.d("UI", "onStart()" + String.valueOf(position));
         super.onStart();
     }
 
@@ -101,27 +98,16 @@ public class AppListFragment extends Fragment {
     @Override
     public void onDestroy() {
         LogUtil.d("UI", "onDestroy" + String.valueOf(position));
-        //viewModel = null;
-        //presenter = null;
         super.onDestroy();
     }
 
-/*
+
     private void initSwipeRefresh() {
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
-            presenter.RefreshView();
+            LogUtil.d(Tag,"Refresh");
+            //mainViewModel.getItems_user().items = new ObservableArrayList<>();
+            mainViewModel.getItems_user().clear();
             binding.swipeRefreshLayout.setRefreshing(false);
         });
     }
-    public void setPosition(int position) {
-        this.position = position;
-    }
-
-    public Presenter getPresenter() {
-        return presenter;
-    }
-    public void Search(String query){
-        presenter.SeaechView(query);
-    }
-*/
 }

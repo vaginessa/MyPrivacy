@@ -5,11 +5,8 @@ import android.databinding.ObservableArrayList;
 
 import com.jasperhale.myprivacy.Activity.Base.LogUtil;
 import com.jasperhale.myprivacy.Activity.Repository.MainRepository;
-import com.jasperhale.myprivacy.Activity.adapter.BindingAdapterItem;
 import com.jasperhale.myprivacy.Activity.item.ApplistItem;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by ZHANG on 2017/12/31.
@@ -73,5 +70,27 @@ public class MainViewModel extends android.arch.lifecycle.ViewModel implements L
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     void destory() {
         LogUtil.d(TAG, "destory");
+    }
+
+    public void SearchRecyclerview(String query,int position){
+        switch (position){
+            case 0:{
+                LogUtil.d(TAG,"SearchRecyclerview"+position);
+                //items_user.setItems(mainRepository.getItems_user(query));
+                //mainRepository.getItems_user(items_user.items,query);
+                break;
+            }
+            case 1:{
+                LogUtil.d(TAG,"SearchRecyclerview"+position);
+                //items_system.items = mainRepository.getItems_system(qiery);
+                break;
+            }
+            case 2:{
+                LogUtil.d(TAG,"SearchRecyclerview"+position);
+                //items_limit.items = mainRepository.getItems_user(qiery);
+                break;
+            }
+            default: break;
+        }
     }
 }
