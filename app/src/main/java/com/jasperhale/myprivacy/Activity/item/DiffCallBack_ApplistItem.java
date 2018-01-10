@@ -1,6 +1,7 @@
 package com.jasperhale.myprivacy.Activity.item;
 
-import android.databinding.ObservableArrayList;
+import android.databinding.ObservableList;
+import android.databinding.ObservableList;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -15,9 +16,9 @@ import java.util.List;
  */
 
 public class DiffCallBack_ApplistItem extends DiffUtil.Callback{
-    private ObservableArrayList<ApplistItem> mOldDatas, mNewDatas;//看名字
+    private ObservableList<ApplistItem> mOldDatas, mNewDatas;//看名字
 
-    public DiffCallBack_ApplistItem(ObservableArrayList<ApplistItem> mOldDatas, ObservableArrayList<ApplistItem> mNewDatas) {
+    public DiffCallBack_ApplistItem(ObservableList<ApplistItem> mOldDatas, ObservableList<ApplistItem> mNewDatas) {
         this.mOldDatas = mOldDatas;
         this.mNewDatas = mNewDatas;
     }

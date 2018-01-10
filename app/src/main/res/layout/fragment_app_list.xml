@@ -2,8 +2,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data class=".AppListFragment" >
-        <import type="com.jasperhale.myprivacy.Activity.ViewModel.FragmentViewModel"/>
-        <variable name="fragmentViewModel" type="FragmentViewModel"/>
+        <variable
+            name="modelList"
+            type="android.databinding.ObservableList"/>
     </data>
 
 
@@ -23,7 +24,7 @@
                 android:layout_height="fill_parent"
                 android:layout_marginBottom="20dp"
                 android:paddingTop="8dp"
-                app:binditems="@{fragmentViewModel}"/>
+                app:binditems="@{modelList}"/>
         </android.support.v4.widget.SwipeRefreshLayout>
     </FrameLayout>
 

@@ -2,6 +2,7 @@ package com.jasperhale.myprivacy.Activity.ViewModel;
 
 import android.arch.lifecycle.*;
 import android.databinding.ObservableArrayList;
+import android.databinding.ObservableList;
 
 import com.jasperhale.myprivacy.Activity.Base.LogUtil;
 import com.jasperhale.myprivacy.Activity.Repository.MainRepository;
@@ -14,9 +15,9 @@ import com.jasperhale.myprivacy.Activity.item.ApplistItem;
 
 public class MainViewModel extends android.arch.lifecycle.ViewModel implements LifecycleObserver {
     private MainRepository mainRepository;
-    private ObservableArrayList<ApplistItem> items_system;
-    private ObservableArrayList<ApplistItem> items_user;
-    private ObservableArrayList<ApplistItem> items_limit;
+    public ObservableList<ApplistItem> items_system;
+    public ObservableList<ApplistItem> items_user;
+    public ObservableList<ApplistItem> items_limit;
     private String TAG = "MainViewModel";
 
     public MainViewModel() {
@@ -26,15 +27,15 @@ public class MainViewModel extends android.arch.lifecycle.ViewModel implements L
         this.items_limit = new ObservableArrayList<>();
     }
 
-    public ObservableArrayList<ApplistItem> getItems_user() {
+    public ObservableList<ApplistItem> getItems_user() {
         return items_user;
     }
 
-    public ObservableArrayList<ApplistItem> getItems_system() {
+    public ObservableList<ApplistItem> getItems_system() {
         return items_system;
     }
 
-    public ObservableArrayList<ApplistItem> getItems_limit() {
+    public ObservableList<ApplistItem> getItems_limit() {
         return items_limit;
     }
 
@@ -45,6 +46,7 @@ public class MainViewModel extends android.arch.lifecycle.ViewModel implements L
         items_user = mainRepository.getItems_user();
         items_system = mainRepository.getItems_system();
         items_limit = mainRepository.getItems_limit();
+        //items_user.addAll(mainRepository.getItems_user());
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)

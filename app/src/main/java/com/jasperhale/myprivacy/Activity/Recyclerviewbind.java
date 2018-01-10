@@ -2,17 +2,24 @@ package com.jasperhale.myprivacy.Activity;
 
 import android.content.Context;
 import android.databinding.BindingAdapter;
-import android.databinding.ObservableArrayList;
+import android.databinding.ObservableList;
 import android.graphics.drawable.Drawable;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.jasperhale.myprivacy.Activity.ViewModel.FragmentViewModel;
+import com.jasperhale.myprivacy.Activity.Base.LogUtil;
 import com.jasperhale.myprivacy.Activity.adapter.BindAdapter_applist;
 import com.jasperhale.myprivacy.Activity.item.ApplistItem;
+import com.jasperhale.myprivacy.Activity.item.DiffCallBack_ApplistItem;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 
 /**
@@ -36,11 +43,13 @@ public class Recyclerviewbind {
     }
 
     @BindingAdapter("binditems")
-    public  static void bindList(RecyclerView view,ObservableArrayList<ApplistItem> items) {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
-        view.setLayoutManager(layoutManager);
-        view.setAdapter(new BindAdapter_applist(items));
-        view.setNestedScrollingEnabled(false);
+    public  static void bindList(RecyclerView view,ObservableList items) {
+        if (view.getAdapter() == null) {
+            LogUtil.d("binditems","view.getAdapter() == null");
+            LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
+            view.setLayoutManager(layoutManager);
+            view.setAdapter(new BindAdapter_applist(items));
+            view.setNestedScrollingEnabled(false);
+        }
     }
-
 }

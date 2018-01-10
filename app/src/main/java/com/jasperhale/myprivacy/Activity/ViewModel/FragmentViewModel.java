@@ -2,6 +2,7 @@ package com.jasperhale.myprivacy.Activity.ViewModel;
 
 import android.databinding.DataBindingUtil;
 import android.databinding.ObservableArrayList;
+import android.databinding.ObservableList;
 import android.databinding.ViewDataBinding;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -29,11 +30,11 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class FragmentViewModel extends RecyclerView.Adapter<BindingHolder> {
-    public ObservableArrayList<ApplistItem> items;
+    public ObservableList<ApplistItem> items;
     protected FragmentViewModel.ListChangedCallback itemsChangeCallback;
 
     /*
-    public BindAdapter_applist(ObservableArrayList<ApplistItem> items) {
+    public BindAdapter_applist(ObservableList<ApplistItem> items) {
         super();
         this.items = items;
         this.itemsChangeCallback = new ListChangedCallback();
@@ -45,13 +46,13 @@ public class FragmentViewModel extends RecyclerView.Adapter<BindingHolder> {
         this.itemsChangeCallback = new FragmentViewModel.ListChangedCallback();
     }
 
-    //获取ObservableArrayList<ApplistItem> 实例
-    public ObservableArrayList<ApplistItem> getItems() {
+    //获取ObservableList<ApplistItem> 实例
+    public ObservableList<ApplistItem> getItems() {
         return items;
     }
 
     //显示list<item>
-    public void setItems(ObservableArrayList<ApplistItem> items) {
+    public void setItems(ObservableList<ApplistItem> items) {
         this.items = items;
     }
 
@@ -60,7 +61,7 @@ public class FragmentViewModel extends RecyclerView.Adapter<BindingHolder> {
         items.clear();
     }
 
-    //绑定ObservableArrayList
+    //绑定ObservableList
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView)
     {
@@ -131,7 +132,7 @@ public class FragmentViewModel extends RecyclerView.Adapter<BindingHolder> {
 
     //刷新列表
 
-    private void Refresh(ObservableArrayList<ApplistItem> items) {
+    private void Refresh(ObservableList<ApplistItem> items) {
         Observable
                 .create((ObservableOnSubscribe<String>)
                         emitter -> emitter.onNext("")
@@ -149,32 +150,32 @@ public class FragmentViewModel extends RecyclerView.Adapter<BindingHolder> {
 
 
 
-    class ListChangedCallback extends ObservableArrayList.OnListChangedCallback<ObservableArrayList<ApplistItem>> {
+    class ListChangedCallback extends ObservableList.OnListChangedCallback<ObservableList<ApplistItem>> {
         @Override
-        public void onChanged(ObservableArrayList<ApplistItem> newItems) {
+        public void onChanged(ObservableList<ApplistItem> newItems) {
             Refresh(newItems);
         }
 
         @Override
-        public void onItemRangeChanged(ObservableArrayList<ApplistItem> newItems, int positionStart, int itemCount) {
+        public void onItemRangeChanged(ObservableList<ApplistItem> newItems, int positionStart, int itemCount) {
             //notifyItemRangeChanged(positionStart, itemCount);
         }
 
         @Override
-        public void onItemRangeInserted(ObservableArrayList<ApplistItem> newItems, int positionStart, int itemCount) {
+        public void onItemRangeInserted(ObservableList<ApplistItem> newItems, int positionStart, int itemCount) {
             //notifyItemRangeInserted(positionStart, itemCount);
             //notifyItemRangeChanged(positionStart, itemCount);
         }
 
         @Override
-        public void onItemRangeMoved(ObservableArrayList<ApplistItem> newItems,int fromPosition, int toPosition, int itemCount) {
+        public void onItemRangeMoved(ObservableList<ApplistItem> newItems,int fromPosition, int toPosition, int itemCount) {
             // Note:不支持一次性移动"多个"item
             //notifyItemMoved(fromPosition, toPosition);
             //notifyDataSetChanged();
         }
 
         @Override
-        public void onItemRangeRemoved(ObservableArrayList<ApplistItem> sender, int positionStart, int itemCount) {
+        public void onItemRangeRemoved(ObservableList<ApplistItem> sender, int positionStart, int itemCount) {
             // Note:不支持一次性移动"多个"item
             //notifyItemRangeRemoved(positionStart, itemCount);
             //notifyItemRangeChanged(positionStart, itemCount);

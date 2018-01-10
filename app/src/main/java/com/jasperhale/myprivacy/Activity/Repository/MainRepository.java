@@ -2,6 +2,8 @@ package com.jasperhale.myprivacy.Activity.Repository;
 
 import android.content.pm.PackageInfo;
 import android.databinding.ObservableArrayList;
+import android.databinding.ObservableList;
+import android.databinding.ObservableList;
 import android.text.TextUtils;
 
 import com.jasperhale.myprivacy.Activity.Base.LogUtil;
@@ -26,9 +28,9 @@ import io.reactivex.schedulers.Schedulers;
 
 public class MainRepository {
     private final Model model;
-    private ObservableArrayList<ApplistItem> items_system;
-    private ObservableArrayList<ApplistItem> items_user;
-    private ObservableArrayList<ApplistItem> items_limit;
+    private ObservableList<ApplistItem> items_system;
+    private ObservableList<ApplistItem> items_user;
+    private ObservableList<ApplistItem> items_limit;
 
     public MainRepository() {
         model = new mModel();
@@ -42,36 +44,36 @@ public class MainRepository {
         */
     }
 
-    public ObservableArrayList<ApplistItem> getItems_user() {
+    public ObservableList<ApplistItem> getItems_user() {
         items_user = getitems(0);
         return items_user;
     }
 
-    public ObservableArrayList<ApplistItem> getItems_user(String query) {
+    public ObservableList<ApplistItem> getItems_user(String query) {
         return searchitems(query, items_user);
     }
 
-    public ObservableArrayList<ApplistItem> getItems_system() {
+    public ObservableList<ApplistItem> getItems_system() {
         items_system = getitems(1);
         return items_system;
     }
 
-    public ObservableArrayList<ApplistItem> getItems_system(String query) {
+    public ObservableList<ApplistItem> getItems_system(String query) {
         return searchitems(query, items_system);
 
     }
 
-    public ObservableArrayList<ApplistItem> getItems_limit() {
+    public ObservableList<ApplistItem> getItems_limit() {
         items_limit = getitems(2);
         return items_limit;
     }
 
-    public ObservableArrayList<ApplistItem> getItems_limit(String query) {
+    public ObservableList<ApplistItem> getItems_limit(String query) {
         return searchitems(query, items_limit);
     }
 
-    private ObservableArrayList<ApplistItem> getitems(int position) {
-        ObservableArrayList<ApplistItem> Appitems = new ObservableArrayList<>();
+    private ObservableList<ApplistItem> getitems(int position) {
+        ObservableList<ApplistItem> Appitems = new ObservableArrayList<>();
         Observable
                 .create((ObservableOnSubscribe<List<PackageInfo>>) emitter -> emitter.onNext(model.getPackages()))
                 //等待
@@ -124,11 +126,11 @@ public class MainRepository {
         return Appitems;
     }
 
-    private ObservableArrayList<ApplistItem> searchitems(String query, ObservableArrayList<ApplistItem> items_main) {
+    private ObservableList<ApplistItem> searchitems(String query, ObservableList<ApplistItem> items_main) {
         if (query.equals("")) {
             return items_main;
         } else {
-            ObservableArrayList<ApplistItem> items = new ObservableArrayList<>();
+            ObservableList<ApplistItem> items = new ObservableArrayList<>();
             Observable
                     .create((ObservableOnSubscribe<String>)
                             emitter -> emitter.onNext(MyApplicantion.transformPinYin(query))
