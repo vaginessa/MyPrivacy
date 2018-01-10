@@ -6,11 +6,12 @@ import android.databinding.ObservableList;
 import android.databinding.ViewDataBinding;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.nfc.Tag;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import com.jasperhale.myprivacy.Activity.Base.LogUtil;
@@ -34,13 +35,14 @@ public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
     private ObservableList<ApplistItem> items;
     protected ListChangedCallback itemsChangeCallback;
     RecyclerView recyclerView;
+    private final String TAG ="BindAdapter_applist";
 
 
 
-    public BindAdapter_applist(ObservableList<ApplistItem> items) {
+    public BindAdapter_applist(@Nullable ObservableList<ApplistItem> items) {
         super();
-        this.items = items;
         this.itemsChangeCallback = new ListChangedCallback();
+        this.setItems(items);
     }
 
     public BindAdapter_applist() {
@@ -55,8 +57,35 @@ public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
     }
 
     //显示list<item>
-    public void setItems(ObservableList<ApplistItem> items) {
+    public void setItems(@Nullable ObservableList<ApplistItem> items) {
         this.items = items;
+        if (this.items == items)
+        {
+            return;
+        }
+
+        if (this.items != null)
+        {
+            this.items.removeOnListChangedCallback(itemsChangeCallback);
+            notifyItemRangeRemoved(0, this.items.size());
+        }
+
+        if (items instanceof ObservableList)
+        {
+            this.items = (ObservableList<ApplistItem>) items;
+            notifyItemRangeInserted(0, this.items.size());
+            this.items.addOnListChangedCallback(itemsChangeCallback);
+        }
+        else if (items != null)
+        {
+            this.items = new ObservableArrayList<>();
+            this.items.addOnListChangedCallback(itemsChangeCallback);
+            this.items.addAll(items);
+        }
+        else
+        {
+            this.items = null;
+        }
     }
 
     //清除item
@@ -65,13 +94,14 @@ public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
     }
 
     //绑定ObservableList 回掉
+    /*
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView)
     {
         super.onAttachedToRecyclerView(recyclerView);
         this.items.addOnListChangedCallback(itemsChangeCallback);
         this.recyclerView = recyclerView;
-    }
+    }*/
 
     //解绑
     @Override
@@ -158,6 +188,7 @@ public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
     class ListChangedCallback extends ObservableList.OnListChangedCallback<ObservableList<ApplistItem>> {
         @Override
         public void onChanged(ObservableList<ApplistItem> newItems) {
+            LogUtil.d(TAG,"onChanged");
             Observable
                     .create((ObservableOnSubscribe<String>)
                             emitter -> emitter.onNext("")
@@ -177,6 +208,7 @@ public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
 
         @Override
         public void onItemRangeChanged(ObservableList<ApplistItem> newItems, int positionStart, int itemCount) {
+            LogUtil.d(TAG,"onItemRangeChanged");
             Observable
                     .create((ObservableOnSubscribe<String>)
                             emitter -> emitter.onNext("")
@@ -190,13 +222,12 @@ public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
                             }
                         }
                     });
-
-
             //notifyItemRangeChanged(positionStart, itemCount);
         }
 
         @Override
         public void onItemRangeInserted(ObservableList<ApplistItem> newItems, int positionStart, int itemCount) {
+            LogUtil.d(TAG,"onItemRangeInserted");
             Observable
                     .create((ObservableOnSubscribe<String>)
                             emitter -> emitter.onNext("")
@@ -217,6 +248,7 @@ public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
 
         @Override
         public void onItemRangeMoved(ObservableList<ApplistItem> newItems,int fromPosition, int toPosition, int itemCount) {
+            LogUtil.d(TAG,"onItemRangeMoved");
             Observable
                     .create((ObservableOnSubscribe<String>)
                             emitter -> emitter.onNext("")
@@ -225,8 +257,7 @@ public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
                     .subscribe(diffResult -> {
                         if (!(recyclerView == null)){
                             if (!recyclerView.isComputingLayout()){
-                                notifyItemRangeRemoved(fromPosition, itemCount);
-                                notifyItemRangeInserted(toPosition, itemCount);
+                                notifyDataSetChanged();
                             }
                         }
                     });
@@ -237,6 +268,7 @@ public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
 
         @Override
         public void onItemRangeRemoved(ObservableList<ApplistItem> sender, int positionStart, int itemCount) {
+            LogUtil.d(TAG,"onItemRangeRemoved");
             Observable
                     .create((ObservableOnSubscribe<String>)
                             emitter -> emitter.onNext("")
