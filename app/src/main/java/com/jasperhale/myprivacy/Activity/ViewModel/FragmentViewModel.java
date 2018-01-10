@@ -29,6 +29,6 @@ import io.reactivex.schedulers.Schedulers;
  * Created by ZHANG on 2018/1/3.
  */
 
-public class FragmentViewModel extends {
+public class FragmentViewModel  {
     public ObservableList<ApplistItem> items;
 }

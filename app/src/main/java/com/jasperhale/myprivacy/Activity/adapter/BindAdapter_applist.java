@@ -34,7 +34,7 @@ public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
     private ObservableList<ApplistItem> items;
     protected ListChangedCallback itemsChangeCallback;
     RecyclerView recyclerView;
-    private final String TAG ="BindAdapter_applist";
+    final String TAG ="BindAdapter_applist";
 
 
 
@@ -187,6 +187,7 @@ public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
     class ListChangedCallback extends ObservableList.OnListChangedCallback<ObservableList<ApplistItem>> {
         @Override
         public void onChanged(ObservableList<ApplistItem> newItems) {
+            setItems(items);
             LogUtil.d(TAG,"onChanged");
             Observable
                     .create((ObservableOnSubscribe<String>)
@@ -208,6 +209,7 @@ public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
         @Override
         public void onItemRangeChanged(ObservableList<ApplistItem> newItems, int positionStart, int itemCount) {
             LogUtil.d(TAG,"onItemRangeChanged");
+            setItems(items);
             Observable
                     .create((ObservableOnSubscribe<String>)
                             emitter -> emitter.onNext("")
@@ -227,6 +229,7 @@ public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
         @Override
         public void onItemRangeInserted(ObservableList<ApplistItem> newItems, int positionStart, int itemCount) {
             LogUtil.d(TAG,"onItemRangeInserted");
+            setItems(items);
             Observable
                     .create((ObservableOnSubscribe<String>)
                             emitter -> emitter.onNext("")
@@ -248,6 +251,7 @@ public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
         @Override
         public void onItemRangeMoved(ObservableList<ApplistItem> newItems,int fromPosition, int toPosition, int itemCount) {
             LogUtil.d(TAG,"onItemRangeMoved");
+            setItems(items);
             Observable
                     .create((ObservableOnSubscribe<String>)
                             emitter -> emitter.onNext("")
@@ -268,6 +272,7 @@ public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
         @Override
         public void onItemRangeRemoved(ObservableList<ApplistItem> sender, int positionStart, int itemCount) {
             LogUtil.d(TAG,"onItemRangeRemoved");
+            setItems(items);
             Observable
                     .create((ObservableOnSubscribe<String>)
                             emitter -> emitter.onNext("")

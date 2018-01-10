@@ -120,7 +120,8 @@ public class AppListFragment extends Fragment {
             //items = mainViewModel.getItems_user();
             //mainViewModel.items_user.addAll(mainViewModel.getItems_system());
             //mainViewModel.items_user.clear();
-            mainViewModel.items_user.addAll(mainViewModel.getItems_system());
+            //mainViewModel.items_user.addAll(mainViewModel.getItems_system());
+            mainViewModel.items_user.remove(0);
             binding.swipeRefreshLayout.setRefreshing(false);
         });
     }
