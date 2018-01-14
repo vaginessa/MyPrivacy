@@ -31,22 +31,15 @@ import io.reactivex.schedulers.Schedulers;
 
 public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
 
+    private final String TAG = "BindAdapter_applist";
+    private ListChangedCallback itemsChangeCallback;
+    private RecyclerView recyclerView;
     private ObservableList<ApplistItem> items;
-    protected ListChangedCallback itemsChangeCallback;
-    RecyclerView recyclerView;
-    final String TAG ="BindAdapter_applist";
-
 
 
     public BindAdapter_applist(@Nullable ObservableList<ApplistItem> items) {
         super();
-        this.itemsChangeCallback = new ListChangedCallback();
-        this.setItems(items);
-    }
-
-    public BindAdapter_applist() {
-        super();
-        this.items = new ObservableArrayList<>();
+        this.items = items;
         this.itemsChangeCallback = new ListChangedCallback();
     }
 
@@ -57,32 +50,23 @@ public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
 
     //显示list<item>
     public void setItems(@Nullable ObservableList<ApplistItem> items) {
-        this.items = items;
-        if (this.items == items)
-        {
+        //this.items = items;
+        if (this.items == items) {
             return;
         }
-
-        if (this.items != null)
-        {
+        if (this.items != null) {
             this.items.removeOnListChangedCallback(itemsChangeCallback);
             notifyItemRangeRemoved(0, this.items.size());
         }
-
-        if (items instanceof ObservableList)
-        {
+        if (items instanceof ObservableList) {
             this.items = (ObservableList<ApplistItem>) items;
             notifyItemRangeInserted(0, this.items.size());
             this.items.addOnListChangedCallback(itemsChangeCallback);
-        }
-        else if (items != null)
-        {
+        } else if (items != null) {
             this.items = new ObservableArrayList<>();
             this.items.addOnListChangedCallback(itemsChangeCallback);
             this.items.addAll(items);
-        }
-        else
-        {
+        } else {
             this.items = null;
         }
     }
@@ -93,19 +77,16 @@ public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
     }
 
     //绑定ObservableList 回掉
-    /*
     @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView)
-    {
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
-        this.items.addOnListChangedCallback(itemsChangeCallback);
+        this.setItems(items);
         this.recyclerView = recyclerView;
-    }*/
+    }
 
     //解绑
     @Override
-    public void onDetachedFromRecyclerView(RecyclerView recyclerView)
-    {
+    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
         this.items.removeOnListChangedCallback(itemsChangeCallback);
         this.recyclerView = null;
@@ -165,7 +146,6 @@ public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
     }
 
 
-
     //刷新列表
     private void Refresh(ObservableList<ApplistItem> items) {
         Observable
@@ -187,104 +167,97 @@ public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
     class ListChangedCallback extends ObservableList.OnListChangedCallback<ObservableList<ApplistItem>> {
         @Override
         public void onChanged(ObservableList<ApplistItem> newItems) {
-            setItems(items);
-            LogUtil.d(TAG,"onChanged");
-            Observable
-                    .create((ObservableOnSubscribe<String>)
-                            emitter -> emitter.onNext("")
-                    )
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(diffResult -> {
-                        if (!(recyclerView == null)){
-                            if (!recyclerView.isComputingLayout()){
+            LogUtil.d(TAG, "onChanged");
+            if (!(recyclerView == null)) {
+                if (!recyclerView.isComputingLayout()) {
+                    Observable
+                            .create((ObservableOnSubscribe<String>)
+                                    emitter -> emitter.onNext("")
+                            )
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(diffResult -> {
                                 Refresh(newItems);
-                            }
-                        }
-                    });
-
-            //Refresh(newItems);
+                            });
+                }
+            }
             //notifyDataSetChanged();
         }
 
         @Override
         public void onItemRangeChanged(ObservableList<ApplistItem> newItems, int positionStart, int itemCount) {
-            LogUtil.d(TAG,"onItemRangeChanged");
-            setItems(items);
-            Observable
-                    .create((ObservableOnSubscribe<String>)
-                            emitter -> emitter.onNext("")
-                    )
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(diffResult -> {
+            LogUtil.d(TAG, "onItemRangeChanged");
 
-                        if (!(recyclerView == null)){
-                            if (!recyclerView.isComputingLayout()){
+            if (!(recyclerView == null)) {
+                if (!recyclerView.isComputingLayout()) {
+                    Observable
+                            .create((ObservableOnSubscribe<String>)
+                                    emitter -> emitter.onNext("")
+                            )
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(diffResult -> {
                                 notifyItemRangeChanged(positionStart, itemCount);
-                            }
-                        }
-                    });
+                            });
+                }
+            }
             //notifyItemRangeChanged(positionStart, itemCount);
         }
 
         @Override
         public void onItemRangeInserted(ObservableList<ApplistItem> newItems, int positionStart, int itemCount) {
-            LogUtil.d(TAG,"onItemRangeInserted");
-            setItems(items);
-            Observable
-                    .create((ObservableOnSubscribe<String>)
-                            emitter -> emitter.onNext("")
-                    )
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(diffResult -> {
-                        if (!(recyclerView == null)){
-                            if (!recyclerView.isComputingLayout()){
+            LogUtil.d(TAG, "onItemRangeInserted");
+            if (!(recyclerView == null)) {
+                if (!recyclerView.isComputingLayout()) {
+                    Observable
+                            .create((ObservableOnSubscribe<String>)
+                                    emitter -> emitter.onNext("")
+                            )
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(diffResult -> {
                                 notifyItemRangeInserted(positionStart, itemCount);
-                            }
-                        }
-                    });
-
-
+                            });
+                }
+            }
+            //setItems(newItems);
             //notifyItemRangeInserted(positionStart, itemCount);
             //notifyItemRangeChanged(positionStart, itemCount);
         }
 
         @Override
-        public void onItemRangeMoved(ObservableList<ApplistItem> newItems,int fromPosition, int toPosition, int itemCount) {
-            LogUtil.d(TAG,"onItemRangeMoved");
-            setItems(items);
-            Observable
-                    .create((ObservableOnSubscribe<String>)
-                            emitter -> emitter.onNext("")
-                    )
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(diffResult -> {
-                        if (!(recyclerView == null)){
-                            if (!recyclerView.isComputingLayout()){
+        public void onItemRangeMoved(ObservableList<ApplistItem> newItems, int fromPosition, int toPosition, int itemCount) {
+            LogUtil.d(TAG, "onItemRangeMoved");
+            if (!(recyclerView == null)) {
+                if (!recyclerView.isComputingLayout()) {
+                    Observable
+                            .create((ObservableOnSubscribe<String>)
+                                    emitter -> emitter.onNext("")
+                            )
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(diffResult -> {
                                 notifyDataSetChanged();
-                            }
-                        }
-                    });
+                            });
+                }
+            }
 
             // Note:不支持一次性移动"多个"item
+            //setItems(newItems);
             //notifyDataSetChanged();
         }
 
         @Override
         public void onItemRangeRemoved(ObservableList<ApplistItem> sender, int positionStart, int itemCount) {
-            LogUtil.d(TAG,"onItemRangeRemoved");
-            setItems(items);
-            Observable
-                    .create((ObservableOnSubscribe<String>)
-                            emitter -> emitter.onNext("")
-                    )
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(diffResult -> {
-                        if (!(recyclerView == null)){
-                            if (!recyclerView.isComputingLayout()){
+            LogUtil.d(TAG, "onItemRangeRemoved");
+            if (!(recyclerView == null)) {
+                if (!recyclerView.isComputingLayout()) {
+                    Observable
+                            .create((ObservableOnSubscribe<String>)
+                                    emitter -> emitter.onNext("")
+                            )
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(diffResult -> {
                                 notifyItemRangeRemoved(positionStart, itemCount);
-                            }
-                        }
-                    });
+                            });
+                }
+            }
             //notifyItemRangeRemoved(positionStart, itemCount);
         }
     }

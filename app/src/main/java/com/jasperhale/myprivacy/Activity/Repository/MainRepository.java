@@ -21,12 +21,14 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.BehaviorSubject;
 
 /**
  * Created by ZHANG on 2017/12/31.
  */
 
 public class MainRepository {
+    private final String TAG = "MainRepository";
     private final Model model;
     private ObservableList<ApplistItem> items_system;
     private ObservableList<ApplistItem> items_user;
@@ -37,16 +39,18 @@ public class MainRepository {
         this.items_user = new ObservableArrayList<>();
         this.items_system = new ObservableArrayList<>();
         this.items_limit = new ObservableArrayList<>();
-       /*
-        this.items_user = getitems(0);
-        this.items_system = getitems(1);
-        this.items_limit = getitems(2);
-        */
     }
 
     public ObservableList<ApplistItem> getItems_user() {
-        items_user = getitems(0);
         return items_user;
+    }
+
+    public void Items_user_Obtain() {
+        items_user = getitems(0);
+    }
+
+    public void Items_user_Obtain(BehaviorSubject<ObservableList> behaviorSubject) {
+        getitems(0, behaviorSubject);
     }
 
     public ObservableList<ApplistItem> getItems_user(String query) {
@@ -54,18 +58,32 @@ public class MainRepository {
     }
 
     public ObservableList<ApplistItem> getItems_system() {
-        items_system = getitems(1);
         return items_system;
+    }
+
+    public void Items_system_Obtain() {
+        items_system = getitems(1);
+    }
+
+    public void Items_system_Obtain(BehaviorSubject<ObservableList> behaviorSubject) {
+        getitems(1, behaviorSubject);
+        ;
     }
 
     public ObservableList<ApplistItem> getItems_system(String query) {
         return searchitems(query, items_system);
-
     }
 
     public ObservableList<ApplistItem> getItems_limit() {
-        items_limit = getitems(2);
         return items_limit;
+    }
+
+    public void Items_limit_Obtain() {
+        items_limit = getitems(2);
+    }
+
+    public void Items_limit_Obtain(BehaviorSubject<ObservableList> behaviorSubject) {
+        getitems(2, behaviorSubject);
     }
 
     public ObservableList<ApplistItem> getItems_limit(String query) {
@@ -124,6 +142,64 @@ public class MainRepository {
                     Collections.sort(Appitems);
                 });
         return Appitems;
+    }
+
+    private void getitems(int position, BehaviorSubject<ObservableList> behaviorSubject) {
+
+
+        Observable<ObservableList> applistObservable = Observable
+                .create((ObservableOnSubscribe<List<PackageInfo>>) emitter -> emitter.onNext(model.getPackages()))
+                //等待
+                .subscribeOn(Schedulers.trampoline())
+                //cpu密集
+                .observeOn(Schedulers.computation())
+                //筛选系统应用
+                .map(packages -> {
+                    List<PackageInfo> items = new ArrayList<>();
+                    switch (position) {
+                        case 0: {
+                            for (PackageInfo packageInfo : packages) {
+                                if (!model.isSystemApp(packageInfo)) {
+                                    items.add(packageInfo);
+                                }
+                            }
+                            break;
+                        }
+                        case 1: {
+                            for (PackageInfo packageInfo : packages) {
+                                if (model.isSystemApp(packageInfo)) {
+                                    items.add(packageInfo);
+                                }
+                            }
+                            break;
+                        }
+                        case 2: {
+                            for (PackageInfo packageInfo : packages) {
+                                if (model.isLimited(packageInfo)) {
+                                    items.add(packageInfo);
+                                }
+                            }
+                            break;
+                        }
+                        default:
+                            break;
+                    }
+                    return items;
+                })
+                //创建Appitems
+                .map(packages -> {
+                    ObservableList<ApplistItem> Appitems = new ObservableArrayList<>();
+                    for (PackageInfo pac : packages) {
+                        Appitems.add(model.creatApplistItem(pac));
+                    }
+                    return Appitems;
+                })
+                .map(items -> {
+                    Collections.sort(items);
+                    return items;
+                });
+        applistObservable.subscribe(behaviorSubject);
+        LogUtil.d(TAG, "reitems" + String.valueOf(position));
     }
 
     private ObservableList<ApplistItem> searchitems(String query, ObservableList<ApplistItem> items_main) {

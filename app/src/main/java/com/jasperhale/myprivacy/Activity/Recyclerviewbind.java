@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.jasperhale.myprivacy.Activity.Base.LogUtil;
+import com.jasperhale.myprivacy.Activity.ViewModel.FragmentViewModel;
 import com.jasperhale.myprivacy.Activity.adapter.BindAdapter_applist;
 import com.jasperhale.myprivacy.Activity.item.ApplistItem;
 import com.jasperhale.myprivacy.Activity.item.DiffCallBack_ApplistItem;
@@ -30,9 +31,6 @@ public class Recyclerviewbind {
     @BindingAdapter("loadAppIcon")
     public static void LoadDrawable(ImageView imageView, Drawable Icon) {
         Context context = imageView.getContext();
-        //BitmapDrawable bd = (BitmapDrawable)Icon;
-        //Bitmap bitmap = bd.getBitmap();
-
         RequestOptions options = new RequestOptions()
                 .error(Icon)
                 .placeholder(Icon);
@@ -43,13 +41,18 @@ public class Recyclerviewbind {
     }
 
     @BindingAdapter("binditems")
-    public  static void bindList(RecyclerView view,ObservableList items) {
+    public  static void bindList(RecyclerView view, ObservableList items) {
+
         if (view.getAdapter() == null) {
             LogUtil.d("binditems","view.getAdapter() == null");
             LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
             view.setLayoutManager(layoutManager);
             view.setAdapter(new BindAdapter_applist(items));
             view.setNestedScrollingEnabled(false);
+        }else {
+            LogUtil.d("binditems","bindAdapter_applist.setItems(items);");
+            BindAdapter_applist bindAdapter_applist = (BindAdapter_applist)view.getAdapter();
+            bindAdapter_applist.setItems(items);
         }
     }
 }
