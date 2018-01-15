@@ -24,12 +24,12 @@ import io.reactivex.subjects.BehaviorSubject;
 public class FragmentViewModel extends BaseObservable implements LifecycleObserver {
 
     private MainRepository mainRepository;
-    @Bindable
+    //@Bindable
     public ObservableList<ApplistItem> items;
     private final String TAG = "FragmentViewModel";
     //订阅缓存
     public BehaviorSubject<ObservableList> behaviorSubject ;
-    private Observer<ObservableList> setObserver;
+    public Observer<ObservableList> setObserver;
 
     public FragmentViewModel(MainRepository mainRepository) {
         this.mainRepository = mainRepository;
@@ -44,8 +44,9 @@ public class FragmentViewModel extends BaseObservable implements LifecycleObserv
 
             @Override
             public void onNext(ObservableList observableList) {
-                LogUtil.d(TAG,"setObserver");
-                setItems(observableList);
+                LogUtil.d(TAG,"setObserver"+observableList.toString());
+                items.clear();
+                items.addAll(observableList);
             }
 
             @Override

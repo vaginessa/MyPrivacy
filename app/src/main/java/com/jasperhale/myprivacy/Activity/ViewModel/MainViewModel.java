@@ -11,7 +11,7 @@ import com.jasperhale.myprivacy.Activity.Repository.MainRepository;
  */
 
 public class MainViewModel extends android.arch.lifecycle.ViewModel implements LifecycleObserver {
-    private MainRepository mainRepository;
+    public MainRepository mainRepository;
     public FragmentViewModel items_system;
     public FragmentViewModel items_user;
     public FragmentViewModel items_limit;
@@ -28,9 +28,10 @@ public class MainViewModel extends android.arch.lifecycle.ViewModel implements L
     //activity creat 初始化数据
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     void creat() {
-         mainRepository.Items_user_Obtain(items_user.behaviorSubject);
-         mainRepository.Items_system_Obtain(items_system.behaviorSubject);
-         mainRepository.Items_limit_Obtain(items_limit.behaviorSubject);
+        LogUtil.d(TAG, "caeat");
+         mainRepository.items_userObservable.subscribe(items_user.behaviorSubject);
+         mainRepository.items_systemObservable.subscribe(items_system.behaviorSubject);
+         mainRepository.items_limitObservable.subscribe(items_limit.behaviorSubject);
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
@@ -56,6 +57,9 @@ public class MainViewModel extends android.arch.lifecycle.ViewModel implements L
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     void destory() {
         LogUtil.d(TAG, "destory");
+        mainRepository.items_userObservable.subscribe(items_user.behaviorSubject);
+        mainRepository.items_systemObservable.subscribe(items_system.behaviorSubject);
+        mainRepository.items_limitObservable.subscribe(items_limit.behaviorSubject);
     }
 
     public void SearchRecyclerview(String query,int position){

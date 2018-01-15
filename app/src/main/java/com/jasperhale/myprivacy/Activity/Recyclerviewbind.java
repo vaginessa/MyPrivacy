@@ -41,18 +41,111 @@ public class Recyclerviewbind {
     }
 
     @BindingAdapter("binditems")
-    public  static void bindList(RecyclerView view, ObservableList items) {
+    public static void bindList(RecyclerView recyclerView, ObservableList items) {
+        LogUtil.d("binditems", "");
 
-        if (view.getAdapter() == null) {
-            LogUtil.d("binditems","view.getAdapter() == null");
-            LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
-            view.setLayoutManager(layoutManager);
-            view.setAdapter(new BindAdapter_applist(items));
-            view.setNestedScrollingEnabled(false);
-        }else {
-            LogUtil.d("binditems","bindAdapter_applist.setItems(items);");
-            BindAdapter_applist bindAdapter_applist = (BindAdapter_applist)view.getAdapter();
-            bindAdapter_applist.setItems(items);
+        if (recyclerView.getAdapter() == null) {
+            LogUtil.d("binditems", "view.getAdapter() == null");
+            LinearLayoutManager layoutManager = new LinearLayoutManager(recyclerView.getContext());
+            BindAdapter_applist adapter = new BindAdapter_applist(items);
+            recyclerView.setLayoutManager(layoutManager);
+            recyclerView.setAdapter(adapter);
+            items.addOnListChangedCallback(new ObservableList.OnListChangedCallback() {
+                @Override
+                public void onChanged(ObservableList newItems) {
+                    LogUtil.d("binditems", "onChanged");
+
+                    if (!recyclerView.isComputingLayout()) {
+                        Observable
+                                .create((ObservableOnSubscribe<String>)
+                                        emitter -> emitter.onNext("")
+                                )
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(diffResult -> {
+                                    adapter.notifyDataSetChanged();
+                                });
+                        //adapter.notifyDataSetChanged();
+                    }
+                    //notifyDataSetChanged();
+                }
+
+                @Override
+                public void onItemRangeChanged(ObservableList newItems, int positionStart, int itemCount) {
+                    LogUtil.d("binditems", "onItemRangeChanged");
+
+                    if (!recyclerView.isComputingLayout()) {
+                        Observable
+                                .create((ObservableOnSubscribe<String>)
+                                        emitter -> emitter.onNext("")
+                                )
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(diffResult -> {
+                                    adapter.notifyItemRangeChanged(positionStart, itemCount);
+                                });
+                        //adapter.notifyItemRangeChanged(positionStart, itemCount);
+                    }
+                    //notifyItemRangeChanged(positionStart, itemCount);
+                }
+
+                @Override
+                public void onItemRangeInserted(ObservableList newItems, int positionStart, int itemCount) {
+                    LogUtil.d("binditems", "onItemRangeInserted");
+                    if (!recyclerView.isComputingLayout()) {
+                        Observable
+                                .create((ObservableOnSubscribe<String>)
+                                        emitter -> emitter.onNext("")
+                                )
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(diffResult -> {
+                                    adapter.notifyItemRangeInserted(positionStart, itemCount);
+                                });
+                        //adapter.notifyItemRangeInserted(positionStart, itemCount);
+                    }
+                    //setItems(newItems);
+                    //notifyItemRangeInserted(positionStart, itemCount);
+                    //notifyItemRangeChanged(positionStart, itemCount);
+                }
+
+                @Override
+                public void onItemRangeMoved(ObservableList newItems, int fromPosition, int toPosition, int itemCount) {
+                    LogUtil.d("binditems", "onItemRangeMoved");
+                    if (!recyclerView.isComputingLayout()) {
+                        Observable
+                                .create((ObservableOnSubscribe<String>)
+                                        emitter -> emitter.onNext("")
+                                )
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(diffResult -> {
+                                    adapter.notifyDataSetChanged();
+                                });
+                        //adapter.notifyDataSetChanged();
+                    }
+                    // Note:不支持一次性移动"多个"item
+                    //notifyDataSetChanged();
+                }
+
+                @Override
+                public void onItemRangeRemoved(ObservableList sender, int positionStart, int itemCount) {
+                    LogUtil.d("binditems", "onItemRangeRemoved");
+                    if (!recyclerView.isComputingLayout()) {
+                        Observable
+                                .create((ObservableOnSubscribe<String>)
+                                        emitter -> emitter.onNext("")
+                                )
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(diffResult -> {
+                                    adapter.notifyItemRangeRemoved(positionStart, itemCount);
+                                });
+                        //adapter.notifyItemRangeRemoved(positionStart, itemCount);
+                    }
+                    //notifyItemRangeRemoved(positionStart, itemCount);
+                }
+            });
+            recyclerView.setNestedScrollingEnabled(false);
+        } else {
+            LogUtil.d("binditems", "bindAdapter_applist.setItems(items);");
+            //BindAdapter_applist bindAdapter_applist = (BindAdapter_applist) recyclerView.getAdapter();
+            //bindAdapter_applist.setItems(items);
         }
     }
 }

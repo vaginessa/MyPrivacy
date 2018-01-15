@@ -2,6 +2,8 @@ package com.jasperhale.myprivacy.Activity.View;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
+import android.databinding.ObservableArrayList;
+import android.databinding.ObservableList;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -10,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.jasperhale.myprivacy.Activity.Base.LogUtil;
 import com.jasperhale.myprivacy.Activity.ViewModel.MainViewModel;
+import com.jasperhale.myprivacy.Activity.item.ApplistItem;
 import com.jasperhale.myprivacy.R;
 
 
@@ -22,6 +25,8 @@ public class AppListFragment extends Fragment {
     private int position;
     private MainViewModel mainViewModel;
 
+    private ObservableList<ApplistItem> items;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         LogUtil.d("UI", "onCreate" + String.valueOf(position));
@@ -30,6 +35,8 @@ public class AppListFragment extends Fragment {
         position = bundle.getInt("MainActivity");
 
         mainViewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
+
+        items = new ObservableArrayList<>();
 
         switch (position) {
             case 0: {
@@ -115,7 +122,10 @@ public class AppListFragment extends Fragment {
     private void initSwipeRefresh() {
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
             LogUtil.d(Tag,"Refresh");
-            mainViewModel.items_user.set();
+            //mainViewModel.items_user.set();
+            //mainViewModel.mainRepository.items_userObservable.subscribe(mainViewModel.items_user.setObserver);
+            mainViewModel.items_user.items.remove(0);
+            //mainViewModel.items_user.items = items;
             binding.swipeRefreshLayout.setRefreshing(false);
         });
     }

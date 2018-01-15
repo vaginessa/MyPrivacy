@@ -34,11 +34,19 @@ public class MainRepository {
     private ObservableList<ApplistItem> items_user;
     private ObservableList<ApplistItem> items_limit;
 
+    public Observable<ObservableList> items_userObservable;
+    public Observable<ObservableList> items_systemObservable;
+    public Observable<ObservableList> items_limitObservable;
+
     public MainRepository() {
         model = new mModel();
         this.items_user = new ObservableArrayList<>();
         this.items_system = new ObservableArrayList<>();
         this.items_limit = new ObservableArrayList<>();
+
+        items_userObservable = init_Observable(0);
+        items_systemObservable = init_Observable(1);
+        items_limitObservable = init_Observable(2);
     }
 
     public ObservableList<ApplistItem> getItems_user() {
@@ -49,9 +57,6 @@ public class MainRepository {
         items_user = getitems(0);
     }
 
-    public void Items_user_Obtain(BehaviorSubject<ObservableList> behaviorSubject) {
-        getitems(0, behaviorSubject);
-    }
 
     public ObservableList<ApplistItem> getItems_user(String query) {
         return searchitems(query, items_user);
@@ -65,11 +70,6 @@ public class MainRepository {
         items_system = getitems(1);
     }
 
-    public void Items_system_Obtain(BehaviorSubject<ObservableList> behaviorSubject) {
-        getitems(1, behaviorSubject);
-        ;
-    }
-
     public ObservableList<ApplistItem> getItems_system(String query) {
         return searchitems(query, items_system);
     }
@@ -80,10 +80,6 @@ public class MainRepository {
 
     public void Items_limit_Obtain() {
         items_limit = getitems(2);
-    }
-
-    public void Items_limit_Obtain(BehaviorSubject<ObservableList> behaviorSubject) {
-        getitems(2, behaviorSubject);
     }
 
     public ObservableList<ApplistItem> getItems_limit(String query) {
@@ -144,8 +140,7 @@ public class MainRepository {
         return Appitems;
     }
 
-    private void getitems(int position, BehaviorSubject<ObservableList> behaviorSubject) {
-
+    private  Observable<ObservableList> init_Observable(int position) {
 
         Observable<ObservableList> applistObservable = Observable
                 .create((ObservableOnSubscribe<List<PackageInfo>>) emitter -> emitter.onNext(model.getPackages()))
@@ -196,10 +191,11 @@ public class MainRepository {
                 })
                 .map(items -> {
                     Collections.sort(items);
+                    LogUtil.d(TAG, "setObserver"+"reitems" + String.valueOf(position));
                     return items;
                 });
-        applistObservable.subscribe(behaviorSubject);
         LogUtil.d(TAG, "reitems" + String.valueOf(position));
+        return applistObservable;
     }
 
     private ObservableList<ApplistItem> searchitems(String query, ObservableList<ApplistItem> items_main) {

@@ -32,7 +32,7 @@ import io.reactivex.schedulers.Schedulers;
 public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
 
     private final String TAG = "BindAdapter_applist";
-    private ListChangedCallback itemsChangeCallback;
+    //private ListChangedCallback itemsChangeCallback;
     private RecyclerView recyclerView;
     private ObservableList<ApplistItem> items;
 
@@ -40,7 +40,7 @@ public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
     public BindAdapter_applist(@Nullable ObservableList<ApplistItem> items) {
         super();
         this.items = items;
-        this.itemsChangeCallback = new ListChangedCallback();
+        //this.itemsChangeCallback = new ListChangedCallback();
     }
 
     //获取ObservableList<ApplistItem> 实例
@@ -50,7 +50,8 @@ public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
 
     //显示list<item>
     public void setItems(@Nullable ObservableList<ApplistItem> items) {
-        //this.items = items;
+        this.items = items;
+        /*
         if (this.items == items) {
             return;
         }
@@ -68,7 +69,7 @@ public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
             this.items.addAll(items);
         } else {
             this.items = null;
-        }
+        }*/
     }
 
     //清除item
@@ -80,7 +81,7 @@ public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
-        this.setItems(items);
+        //this.setItems(items);
         this.recyclerView = recyclerView;
     }
 
@@ -88,7 +89,7 @@ public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
     @Override
     public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
-        this.items.removeOnListChangedCallback(itemsChangeCallback);
+        //this.items.removeOnListChangedCallback(itemsChangeCallback);
         this.recyclerView = null;
     }
 
@@ -164,7 +165,7 @@ public class BindAdapter_applist extends RecyclerView.Adapter<BindingHolder> {
     }
 
 
-    class ListChangedCallback extends ObservableList.OnListChangedCallback<ObservableList<ApplistItem>> {
+    public class ListChangedCallback extends ObservableList.OnListChangedCallback<ObservableList<ApplistItem>> {
         @Override
         public void onChanged(ObservableList<ApplistItem> newItems) {
             LogUtil.d(TAG, "onChanged");
